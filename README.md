@@ -26,13 +26,13 @@ Compile the source code using a C++ compiler. Below are a few examples of common
 
     shell
 
-g++ main.cpp -o address-book
+g++ AddressBook.cpp -o address-book
 
 Using clang++:
 
 shell
 
-        clang++ main.cpp -o address-book
+        clang++ AddressBook.cpp -o address-book
 
     After successful compilation, an executable file named address-book (or address-book.exe on Windows) will be created in the current directory.
 
@@ -62,7 +62,7 @@ Once you have compiled the Address Book program, follow these steps to run it:
     Follow the prompts and provide the required information based on your chosen option.
 
     The program will save any changes to the "contacts.txt" file.
-    Please note that the "contacts.txt" file should be included in your repository and users should not modify it manually without using the program.
+    Please note that the "contacts.txt" file  should not be modified   manually without using the program.
 
 Contributing
 
