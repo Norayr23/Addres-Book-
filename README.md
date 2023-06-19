@@ -5,11 +5,10 @@ Compilation for Users
 If you are a user and want to run the Address Book program, follow these steps to compile the source code:
 Prerequisites
 
-    C++ compiler supporting C++11 or higher.
-
 Compilation Steps
 
-    Download the source code from the GitHub repository. You can do this by clicking on the green "Code" button and selecting "Download ZIP" or by cloning the repository using Git:
+    Download the source code from the GitHub repository. You can do this by clicking on the green "Code" button and selecting "Download ZIP" or by      cloning the repository using Git:
+    Download contacts.txt file and save it in same directory whith AdressBook.cpp
 
     shell
 
@@ -64,8 +63,6 @@ Once you have compiled the Address Book program, follow these steps to run it:
 
     The program will save any changes to the "contacts.txt" file.
     Please note that the "contacts.txt" file should be included in your repository and users should not modify it manually without using the program.
-
-Prerequisites: C++ compiler supporting C++11 or higher.
 
 Contributing
 
