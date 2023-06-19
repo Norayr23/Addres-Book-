@@ -12,7 +12,7 @@ Compilation Steps
 
     shell
 
-git clone https://github.com/your-username/address-book.git
+git clone https://github.com/Norayr23/Address-Book.git
 
 Extract the downloaded ZIP file (if applicable) and navigate to the project directory:
 
