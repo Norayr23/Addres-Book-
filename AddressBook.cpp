@@ -6,16 +6,32 @@
 #include <regex>
 #include <thread>
 
-class Contact {
-public:
-    std::string name;
-    std::string lastName;
-    std::string phoneNumber;
-    std::string email;
-};
+
 
 class AddressBook {
-private:
+
+     enum NumericChecking {
+
+       Add = 1,
+       Delete,
+       Search,
+       Change,
+       Exit,
+       PhoneLenght = 9,
+       MaxNameLength = 16,
+       MinEmailLength = 5,
+       MaxEmailLenght = 100,
+     };
+     const std::string Cancel = "4";  
+
+    class Contact {
+    public:
+      std::string name;
+      std::string lastName;
+      std::string phoneNumber;
+      std::string email;
+    };
+
     std::vector<Contact> contacts;
 
     void loadFromFile(const std::string& fileName) {
@@ -59,18 +75,17 @@ private:
         if (contacts.size() == 0) {
            return;
         }
-        size_t nameWidth = 0, lastNameWidth = 0, emailWidth = 0;
+        size_t nameWidth = 0, lastNameWidth = 0;
         for (const Contact& contact : contacts) {
             nameWidth = std::max(nameWidth, contact.name.length());
             lastNameWidth = std::max(lastNameWidth, contact.lastName.length());
-            emailWidth = std::max(emailWidth, contact.email.length());
         }
         nameWidth += lastNameWidth;
 
         std::cout << "Name";
         std::cout << std::string(nameWidth + (nameWidth - 4) + 1, ' ');
         std::cout << "Phone";
-        std::cout << std::string(9, ' ');
+        std::cout << std::string(PhoneLenght, ' ');
         std::cout << "Email\n\n";
 
         for (const Contact& contact : contacts) {
@@ -84,14 +99,33 @@ private:
     }
 
     bool isNameValid(const std::string& str) {
-        return str.length() <= 16;
+        if(str.length() > MaxNameLength) {
+            return false;
+        }
+        for (char ch : str) {
+            if ((ch < 'A' || ch > 'Z') && (ch < 'a' || ch > 'z')) {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool isPhoneValid(const std::string& phone) {
-        return phone.length() == 9 && phone[0] == '0';
+        if (phone.length() != PhoneLenght) {
+            return false;
+        }
+        for (char ch : phone) {
+            if (ch < '0' || ch > '9') {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool isEmailValid(const std::string& email) {
+        if (email.length() < MinEmailLength || email.length() > MaxEmailLenght) {
+            return false;
+        }
         std::regex emailPattern(R"(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b)");
         return std::regex_match(email, emailPattern);
     }
@@ -100,15 +134,15 @@ private:
         Contact contact;
         std::cout << "For canceling the process, enter 4." << std::endl;
         std::string name;
-        std::cout << "Enter contact name (maximum 15 characters): ";
+        std::cout << "Enter contact name (maximum 16 characters): ";
         std::cin >> name;
-        if (name == "4") {
+        if (name == Cancel) {
             return false;
         }
         while (!isNameValid(name)) {
             std::cout << "Invalid name. Please try again: ";
             std::cin >> name;
-            if (name == "4") {
+            if (name == Cancel) {
                 return false;
             }
         }
@@ -117,13 +151,13 @@ private:
         std::string lastName;
         std::cout << "Enter contact last name (maximum 15 characters): ";
         std::cin >> lastName;
-        if (lastName == "4") {
+        if (lastName == Cancel) {
             return false;
         }
         while (!isNameValid(lastName)) {
             std::cout << "Invalid last name. Please try again: ";
             std::cin >> lastName;
-            if (lastName == "4") {
+            if (lastName == Cancel) {
                 return false;
             }
         }
@@ -132,13 +166,13 @@ private:
         std::string phone;
         std::cout << "Enter contact phone number (098......): ";
         std::cin >> phone;
-        if (phone == "4") {
+        if (phone == Cancel) {
             return false;
         }
         while (!isPhoneValid(phone)) {
             std::cout << "Invalid phone number. Please try again: ";
             std::cin >> phone;
-            if (phone == "4") {
+            if (phone == Cancel) {
                 return false;
             }
         }
@@ -147,13 +181,13 @@ private:
         std::string email;
         std::cout << "Enter contact email: ";
         std::cin >> email;
-        if (email == "4") {
+        if (email == Cancel) {
             return false;
         }
         while (!isEmailValid(email)) {
             std::cout << "Invalid email. Please try again: ";
             std::cin >> email;
-            if (email == "4") {
+            if (email == Cancel) {
                 return false;
             }
         }
@@ -187,13 +221,15 @@ private:
                 if (answer == 'y') {
                 contacts.erase(it);
                 saveToFile();
+                if (inputName != "") {
+                   std::cout << "Contact changed successfully!" << std::endl;
+                }
+                else {
                 std::cout << "Contact deleted successfully!" << std::endl;
+                }
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 return;
                 
-                }
-                else {
-                   return;
                 }
             }
         }
@@ -208,7 +244,7 @@ private:
          std::getline(std::cin, name);
          for (auto it = contacts.begin(); it != contacts.end(); ++it) {
             if (it -> name == name) {
-                std::cout << it -> name << "  " << it -> lastName << "  " << it -> phoneNumber << it -> email << std::endl;
+                std::cout << it -> name << "  " << it -> lastName << "  " << it -> phoneNumber << "  " << it -> email << std::endl;
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 return;
             }
@@ -253,10 +289,9 @@ public:
             std::cout << "\n1: Add contact  2: Delete contact 3: Search contact 4: Change contact 5: Exit" << std::endl;
             int input;
             std::cin.clear();
-            std::cin.ignore();
             std::cin >> input;
 
-            if (input == 5) {
+            if (input == Exit) {
                 std::string answer;
                 std::cout << "Do you want to exit the program? (y/n): ";
                 std::cin >> answer;
@@ -266,17 +301,17 @@ public:
                 continue;
             }
 
-            if (input == 1) {
+            if (input == Add) {
                 addContact();
             }
 
-            else if (input == 2) {
+            else if (input == Delete) {
                 deleteContact();
             }
-            else if (input == 3) {
+            else if (input == Search) {
                 searchContact();
             }
-            else if (input == 4) {
+            else if (input == Change) {
                changeContact();
             }
             else {
@@ -294,3 +329,4 @@ int main() {
 
     return 0;
 }
+
